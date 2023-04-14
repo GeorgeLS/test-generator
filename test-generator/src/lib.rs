@@ -132,7 +132,7 @@ use syn::{parse_macro_input, Expr, ExprLit, Ident, Lit, Token, ItemFn};
 fn canonical_fn_name(s: &str) -> String {
     // remove delimiters and special characters
     s.replace(
-        &['"', ' ', '.', ':', '-', '*', '/', '\\', '\n', '\t', '\r'][..],
+        &['"', ' ', '.', ':', '-', '*', '/', '\\', '\n', '\t', '\r', '+'][..],
         "_",
     )
 }
@@ -250,6 +250,8 @@ pub fn test_resources(attrs: TokenStream, func: TokenStream) -> TokenStream {
         .map(|path| {
             let path_as_str = path
                 .expect("No such file or directory")
+                .canonicalize()
+                .expect("Invalid path")
                 .into_os_string()
                 .into_string()
                 .expect("bad encoding");
